@@ -8,10 +8,19 @@
   * {
     box-sizing: border-box;
   }
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+  html {
+    background-color: #1A0F0A;
+  }
   body {
     background-color: #1A0F0A;
     color: #F5F1E8;
     font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
   }
   .font-playfair {
     font-family: 'Playfair Display', serif;

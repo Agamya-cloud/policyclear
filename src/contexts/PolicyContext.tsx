@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { policyService } from '../lib/policyService';
 import { Policy, Simulation } from '../types';
 import { useAuth } from './AuthContext';
 
@@ -41,54 +41,40 @@ export function PolicyProvider({ children }: { children: ReactNode }) {
   const fetchPolicies = async () => {
     if (!user) return;
     setLoading(true);
-    const { data } = await supabase
-      .from('policies')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('uploaded_at', { ascending: false });
-    if (data) {
-      setPolicies(data as Policy[]);
-      if (data.length > 0 && !activePolicy) setActivePolicy(data[0] as Policy);
-    }
+    const data = await policyService.fetchPolicies();
+    setPolicies(data);
+    if (data.length > 0 && !activePolicy) setActivePolicy(data[0]);
     setLoading(false);
   };
 
   const fetchSimulations = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from('simulations')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(10);
-    if (data) setSimulations(data as Simulation[]);
+    const data = await policyService.fetchSimulations();
+    setSimulations(data);
   };
 
   const savePolicy = async (policyData: Omit<Policy, 'id' | 'user_id' | 'uploaded_at'>) => {
     if (!user) return null;
-    const { data, error } = await supabase
-      .from('policies')
-      .insert({ ...policyData, user_id: user.id })
-      .select()
-      .single();
-    if (error) return null;
-    await fetchPolicies();
-    return data as Policy;
+    const data = await policyService.savePolicy(policyData);
+    if (data) {
+      await fetchPolicies();
+    }
+    return data;
   };
 
   const deletePolicy = async (id: string) => {
-    await supabase.from('policies').delete().eq('id', id);
+    await policyService.deletePolicy(id);
     await fetchPolicies();
   };
 
   const saveSimulation = async (sim: Omit<Simulation, 'id' | 'user_id' | 'created_at'>) => {
     if (!user) return;
-    await supabase.from('simulations').insert({ ...sim, user_id: user.id });
+    await policyService.saveSimulation(sim);
     await fetchSimulations();
   };
 
   const deleteSimulation = async (id: string) => {
-    await supabase.from('simulations').delete().eq('id', id);
+    await policyService.deleteSimulation(id);
     await fetchSimulations();
   };
 
