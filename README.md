@@ -60,16 +60,11 @@ VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
 VITE_GROQ_API_KEY=your-groq-api-key-here
 
-To get your Supabase keys:
-•	Go to https://supabase.com and sign in
-•	Open your project → Settings → API
-•	Copy the Project URL and anon/public key
-
 To get your Groq API key:
 •	Go to https://console.groq.com/keys
 •	Create a new API key and copy it
 
-⚠️ Important: Never commit your .env file to GitHub. It is already listed in .gitignore.
+
 
 Step 5 — Run the App
 npm run dev
